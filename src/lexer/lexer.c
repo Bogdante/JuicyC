@@ -131,6 +131,7 @@ char get_word_type(const char *string) {
     if (strcmp(string, "F32") == 0) return TK_KEYWORD_F32;
     if (strcmp(string, "F64") == 0) return TK_KEYWORD_F64;
     if (strcmp(string, "U0") == 0) return TK_KEYWORD_U0;
+    if (strcmp(string, "Byte") == 0) return TK_KEYWORD_BYTE;
     return TK_IDENTIFIER;
 }
 
@@ -155,8 +156,14 @@ TokenList* lex(const char *input) {
 
         if (is_word(lexer->ch)) {
             char *word = read_word(lexer);
-            char type = get_word_type(word);
-            add_token(token_list, type, word);
+            const char type = get_word_type(word);
+
+            if (type == TK_IDENTIFIER) {
+                add_token(token_list, type, word);
+            } else {
+                add_token(token_list, type, NULL);
+            }
+
             free(word);
             goto loop_without_next_parse;
         }
